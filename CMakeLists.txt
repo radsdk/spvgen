@@ -28,6 +28,8 @@ cmake_minimum_required(VERSION 3.5)
 PROJECT(spvgen VERSION 1 LANGUAGES C CXX)
 
 option(SPVGEN_ENABLE_WERROR "Build with -Werror enabled" OFF)
+option(SPVGEN_BUILD_STATIC "Build static library" OFF)
+option(SPVGEN_BUILD_SHARED "Build shared library" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -108,54 +110,14 @@ add_custom_command(
 )
 
 # Build static library
-add_library(spvgen_static STATIC ${EMPTY_SOURCE_FILES})
-target_link_libraries(spvgen_static spvgen_base)
+if (SPVGEN_BUILD_STATIC)
+    add_library(spvgen_static STATIC ${EMPTY_SOURCE_FILES})
+    target_link_libraries(spvgen_static spvgen_base)
+endif()
 
 # Build shared library
-add_library(spvgen SHARED ${EMPTY_SOURCE_FILES})
-target_link_libraries(spvgen spvgen_base)
-set_target_properties(spvgen PROPERTIES PREFIX "")
-
-# Set sub library properties
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set_property(TARGET spvgen_base PROPERTY FOLDER spvgen)
-    set_property(TARGET spvgen_static PROPERTY FOLDER spvgen)
-    set_property(TARGET glslang PROPERTY FOLDER spvgen/glslang)
-    set_property(TARGET GenericCodeGen PROPERTY FOLDER spvgen/glslang)
-    set_property(TARGET SPIRV PROPERTY FOLDER spvgen/glslang)
-
-    set_property(TARGET spirv-cross-c PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-core PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-cpp PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-glsl PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-reflect PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-util PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-hlsl PROPERTY FOLDER spvgen/spirv-cross)
-    set_property(TARGET spirv-cross-msl PROPERTY FOLDER spvgen/spirv-cross)
-
-    set_property(TARGET spirv-tools-pkg-config PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spirv-tools-build-version PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spirv-tools-header-DebugInfo PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spirv-tools-vimsyntax PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spirv-tools-header-OpenCLDebugInfo100 PROPERTY FOLDER spvgen/SPIRV-Tools)
-
-    set_property(TARGET spv-tools-cldi100 PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-shdi100 PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spirv-tools-header-NonSemanticShaderDebugInfo100 PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-clspvreflection PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-debuginfo PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-spv-amd-gs PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-spv-amd-sb PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-spv-amd-sevp PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET spv-tools-spv-amd-stm PROPERTY FOLDER spvgen/SPIRV-Tools)
-
-    set_property(TARGET SPIRV-Tools-link PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET SPIRV-Tools-opt PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET SPIRV-Tools-shared PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET SPIRV-Tools-reduce PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET SPIRV-Tools-static PROPERTY FOLDER spvgen/SPIRV-Tools)
-
-    set_property(TARGET core_tables PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET enum_string_mapping PROPERTY FOLDER spvgen/SPIRV-Tools)
-    set_property(TARGET extinst_tables PROPERTY FOLDER spvgen/SPIRV-Tools)
+if (SPVGEN_BUILD_SHARED)
+    add_library(spvgen SHARED ${EMPTY_SOURCE_FILES})
+    target_link_libraries(spvgen spvgen_base)
+    set_target_properties(spvgen PROPERTIES PREFIX "")
 endif()
