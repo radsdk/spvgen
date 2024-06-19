@@ -9,14 +9,15 @@ def pushd(dir):
     global workingDirStack
     workingDirStack.append(os.getcwd())
     os.chdir(dir)
-    print("Working dir: ", os.getcwd())
+    print("Working dir:", os.getcwd())
 
 def popd():
     global workingDirStack
     os.chdir(workingDirStack.pop())
+    print("Working dir:", os.getcwd())
 
 def shell(command : str):
-    print("Execute: ", command)
+    print("Execute:", command)
     subprocess.run(command, shell=True)
 
 def build_spvgen():
@@ -25,6 +26,7 @@ def build_spvgen():
     pushd("external/")
     shell("python fetch_external_sources.py")
     popd()
+    shell("cmake -S . -B build")
     shell("cmake --build build/ --target spvgen --config Release")
     popd()
 
