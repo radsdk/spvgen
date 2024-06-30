@@ -2,27 +2,27 @@ import os
 import sys
 import subprocess
 
-scriptRoot = os.path.dirname(os.path.realpath(__file__))
-workingDirStack = list()
+script_root = os.path.dirname(os.path.realpath(__file__))
+working_dir_stack = list()
 
 def pushd(dir):
-    global workingDirStack
-    workingDirStack.append(os.getcwd())
+    global working_dir_stack
+    working_dir_stack.append(os.getcwd())
     os.chdir(dir)
     print("Working dir:", os.getcwd())
 
 def popd():
-    global workingDirStack
-    os.chdir(workingDirStack.pop())
+    global working_dir_stack
+    os.chdir(working_dir_stack.pop())
     print("Working dir:", os.getcwd())
 
-def shell(command : str):
+def shell(command : str, env = os.environ):
     print("Execute:", command)
-    subprocess.run(command, shell=True)
+    subprocess.run(command, shell=True, env=env)
 
 def build_spvgen():
-    global scriptRoot
-    pushd(scriptRoot)
+    global script_root
+    pushd(script_root)
     pushd("external/")
     shell("python fetch_external_sources.py")
     popd()
